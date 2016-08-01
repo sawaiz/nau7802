@@ -1,6 +1,4 @@
 //Readout for nau7802
-#include <Arduino.h>
-#include <Wire.h>
 #include "NAU7802.h"
 
 //Instantiates a new NAU7802 class
@@ -10,36 +8,58 @@ NAU7802::NAU7802() {
 
 // Setups the HW
 //==============
-boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
+boolean NAU7802::begin(uint8_t addr) {
   _i2caddr = addr;
-  Wire.begin(sda,scl);
-
-  write(NAU7802_PU_CTRL,   0x01);    //reset Registers
-  write(NAU7802_PU_CTRL,   0x02);    //Power up digital
-  readUntilTrue(NAU7802_PU_CTRL, 3); //Wait until power up
-  write(NAU7802_PU_CTRL,   0x06);    //Power up analog
-  write(NAU7802_CTRL1,     0x38);    //Set AVCC to 2.4V
-  write(NAU7802_PGA_REG,   0x01);    //Turn off chopper function
-  write(NAU7802_CTRL2,     0x04);    //Begin calibration
-  readUntilFalse(NAU7802_CTRL2, 2);  //Wait for calibration to finish
-  write(NAU7802_CTRL2,     0x00);    //Conversion Rate = 10SPS
-  write(NAU7802_I2C_CTRL,  0x10);    //Enable Strong Pullup
-  write(NAU7802_PU_CTRL,   0x16);    //Start Conversion
-
+  Wire.begin();
+  resetSettings();
   return true;
+}
+
+// boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
+//   _i2caddr = addr;
+//   Wire.begin(sda,scl);
+//   resetSettings();
+//   return true;
+// }
+
+void NAU7802::resetSettings(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_RR);        //Reset Registers
+  clearBit(NAU7802_PU_CTRL, NAU7802_RR);        //Clear Reset Registers
+  writeBit(NAU7802_PU_CTRL, NAU7802_PUD);       //Power up digital
+  readUntilTrue(NAU7802_PU_CTRL, NAU7802_PUR);  //Wait until power up
+  writeBit(NAU7802_PU_CTRL, NAU7802_PUA);       //Power up analog
+
+  //write(NAU7802_CTRL1,     0x38);    //Set AVCC to 2.4V
+
+  writeBit(NAU7802_ADC_REG, 4);                 //Diasble chopper funcition
+  writeBit(NAU7802_ADC_REG, 5);                 //Diasble chopper funcition
+
+  writeBit(NAU7802_PGA_REG, 0);                 //Diasble chopper funcition
+  writeBit(NAU7802_PGA_REG, 4);                 //Bypass PGA
+
+  writeBit(NAU7802_CTRL2, NAU7802_CALS);        //Begin calibration
+  readUntilFalse(NAU7802_CTRL2, NAU7802_CALS);  //Wait for calibration to finish
+
+  writeBit(NAU7802_I2C_CTRL, NAU7802_SPE);      //Enable Strong Pullup
+
+  writeBit(NAU7802_PU_CTRL,   NAU7802_CS);      //Start Conversion
 }
 
 //Reads set channel
 //======================
-long NAU7802::readADC()
-{
+long NAU7802::readADC(){
   readUntilTrue(NAU7802_PU_CTRL,NAU7802_CR);
   uint32_t adcVal = read24(NAU7802_ADC_B2);
+  writeBit(NAU7802_PU_CTRL, NAU7802_CS);
   if(adcVal & 0x00800000){
     adcVal = ~adcVal+1;
     adcVal = -1*(adcVal & 0x00FFFFFF);
   }
   return adcVal;
+}
+
+float NAU7802::readmV(){
+  return (avcc/(float)16777216)*(float)readADC();
 }
 
 //Select channel
@@ -79,7 +99,12 @@ void NAU7802::rate320sps(){
   writeBit(NAU7802_CTRL2, 6);
 }
 
+//Set AVCC, Internal LDO
+//======================
+
+
 //Low level read and write procedures
+//===================================
 
 void NAU7802::write(uint8_t reg, uint8_t val) {
   Wire.beginTransmission(_i2caddr);
