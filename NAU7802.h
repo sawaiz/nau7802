@@ -117,7 +117,7 @@ class NAU7802 {
 
  private:
   uint8_t _i2caddr;
-  float avcc = 3.3;
+  float _avcc = 3.3;
 
   void resetSettings();
 

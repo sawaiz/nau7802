@@ -15,6 +15,7 @@ boolean NAU7802::begin(uint8_t addr) {
   return true;
 }
 
+//This line is for the ESP8266 Library
 // boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
 //   _i2caddr = addr;
 //   Wire.begin(sda,scl);
