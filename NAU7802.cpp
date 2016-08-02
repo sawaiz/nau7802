@@ -8,20 +8,21 @@ NAU7802::NAU7802() {
 
 // Setups the HW
 //==============
-boolean NAU7802::begin(uint8_t addr) {
-  _i2caddr = addr;
-  Wire.begin();
-  resetSettings();
-  return true;
-}
-
-//This line is for the ESP8266 Library
-// boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
+// boolean NAU7802::begin(uint8_t addr) {
 //   _i2caddr = addr;
-//   Wire.begin(sda,scl);
-//   resetSettings();
+//   wire = TwoWire();
+//   wire.begin();
+//   // resetSettings();
 //   return true;
 // }
+
+boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
+  _i2caddr = addr;
+  wire = SoftwareWire(sda,scl);
+  wire.begin();
+  // resetSettings();
+  return true;
+}
 
 void NAU7802::resetSettings(){
   writeBit(NAU7802_PU_CTRL, NAU7802_RR);        //Reset Registers
@@ -29,8 +30,6 @@ void NAU7802::resetSettings(){
   writeBit(NAU7802_PU_CTRL, NAU7802_PUD);       //Power up digital
   readUntilTrue(NAU7802_PU_CTRL, NAU7802_PUR);  //Wait until power up
   writeBit(NAU7802_PU_CTRL, NAU7802_PUA);       //Power up analog
-
-  //write(NAU7802_CTRL1,     0x38);    //Set AVCC to 2.4V
 
   writeBit(NAU7802_ADC_REG, 4);                 //Diasble chopper funcition
   writeBit(NAU7802_ADC_REG, 5);                 //Diasble chopper funcition
@@ -60,7 +59,7 @@ long NAU7802::readADC(){
 }
 
 float NAU7802::readmV(){
-  return (avcc/(float)16777216)*(float)readADC();
+  return (_avcc/(float)16777216)*(float)readADC();
 }
 
 //Select channel
@@ -70,6 +69,9 @@ void NAU7802::selectCh1(){
 }
 void NAU7802::selectCh2(){
   writeBit(NAU7802_CTRL2, 7);
+}
+void NAU7802::selectTemp(){
+  write(NAU7802_CTRL1,0x38);    //Set AVCC to 2.4V
 }
 
 //Set Sampling rate
@@ -100,18 +102,58 @@ void NAU7802::rate320sps(){
   writeBit(NAU7802_CTRL2, 6);
 }
 
+//Set Pre-Gain Amplifier
+//======================
+void pga128x(){
+}
+void pga64x(){
+}
+void pga32x(){
+}
+void pga16x(){
+}
+void pga8x(){
+}
+void pga4x(){
+}
+void pga2x(){
+}
+void pga1x(){
+}
+void pgaDisable(){
+}
+
 //Set AVCC, Internal LDO
 //======================
+void extAvcc(float extAvcc){
 
+}
+void avcc2V4(){
+}
+void avcc2V7(){
+}
+void avcc3V0(){
+}
+void avcc3V3(){
+}
+void avcc3V6(){
+}
+void avcc3V9(){
+}
+void avcc4V2(){
+}
+void avcc4V5(){
+}
+//write(NAU7802_CTRL1,     0x38);    //Set AVCC to 2.4V
 
 //Low level read and write procedures
 //===================================
 
 void NAU7802::write(uint8_t reg, uint8_t val) {
-  Wire.beginTransmission(_i2caddr);
-  Wire.write((uint8_t)reg);
-  Wire.write(val);
-  Wire.endTransmission();
+  wire.beginTransmission(_i2caddr);
+  wire.write((uint8_t)reg);
+  wire.write(val);
+  wire.endTransmission();
 }
 
 void NAU7802::writeBit(uint8_t reg, uint8_t bit) {
@@ -125,12 +167,12 @@ void NAU7802::clearBit(uint8_t reg, uint8_t bit) {
 }
 
 uint8_t NAU7802::read(uint8_t reg) {
-  Wire.beginTransmission(_i2caddr);
-  Wire.write((uint8_t)reg);
-  Wire.endTransmission();
+  wire.beginTransmission(_i2caddr);
+  wire.write((uint8_t)reg);
+  wire.endTransmission();
 
-  Wire.requestFrom((uint8_t)_i2caddr, (uint8_t)1);
-  return Wire.read();
+  wire.requestFrom((uint8_t)_i2caddr, (uint8_t)1);
+  return wire.read();
 }
 
 boolean NAU7802::readBit(uint8_t reg, uint8_t bit){
@@ -145,34 +187,34 @@ boolean NAU7802::readBit(uint8_t reg, uint8_t bit){
 uint32_t NAU7802::read24(uint8_t reg) {
   uint32_t val;
 
-  Wire.beginTransmission(_i2caddr);
-  Wire.write((uint8_t)reg);
-  Wire.endTransmission();
+  wire.beginTransmission(_i2caddr);
+  wire.write((uint8_t)reg);
+  wire.endTransmission();
 
-  Wire.requestFrom((uint8_t)_i2caddr, (uint8_t)3);
-  val = Wire.read();    // receive high byte
+  wire.requestFrom((uint8_t)_i2caddr, (uint8_t)3);
+  val = wire.read();    // receive high byte
   val <<= 8;            // shift byte to make room for new byte
-  val |= Wire.read();   // receive mid byte
+  val |= wire.read();   // receive mid byte
   val <<= 8;            // shift both bytes
-  val |= Wire.read();   // receive low byte
+  val |= wire.read();   // receive low byte
   return val;
 }
 
 uint32_t NAU7802::read32(uint8_t reg) {
   uint32_t val;
 
-  Wire.beginTransmission(_i2caddr);
-  Wire.write((uint8_t)reg);
-  Wire.endTransmission();
+  wire.beginTransmission(_i2caddr);
+  wire.write((uint8_t)reg);
+  wire.endTransmission();
 
-  Wire.requestFrom((uint8_t)_i2caddr, (uint8_t)4);
-  val = Wire.read();    // receive [31:24] byte
+  wire.requestFrom((uint8_t)_i2caddr, (uint8_t)4);
+  val = wire.read();    // receive [31:24] byte
   val <<= 8;            // shift byte
-  val = Wire.read();    // receive [23:16] byte
+  val = wire.read();    // receive [23:16] byte
   val <<= 8;            // shift bytes
-  val |= Wire.read();   // receive [15:08] byte
+  val |= wire.read();   // receive [15:08] byte
   val <<= 8;            // shift bytes
-  val |= Wire.read();   // receive [07:00] byte
+  val |= wire.read();   // receive [07:00] byte
   return val;
 }
 

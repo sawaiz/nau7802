@@ -1,10 +1,10 @@
 //Arduino library for interfacing with the nau7802 24bit ADC
-
 #ifndef __NAU7802_H__
 #define __NAU7802_H__
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <SoftwareWire.h>
 
 #define NAU7802_I2CADDR   0x2A        //Static Adress
 
@@ -100,14 +100,14 @@ class NAU7802 {
  public:
   NAU7802();
   boolean begin(uint8_t addr = NAU7802_I2CADDR);
-  //This line is for the ESP8266 Library
-  // boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
+  boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
 
   long readADC();
   float readmV();
 
   void selectCh1();
   void selectCh2();
+  void selectTemp();
 
   void rate010sps();
   void rate020sps();
@@ -115,7 +115,29 @@ class NAU7802 {
   void rate080sps();
   void rate320sps();
 
+  void pga128x();
+  void pga64x();
+  void pga32x();
+  void pga16x();
+  void pga8x();
+  void pga4x();
+  void pga2x();
+  void pga1x();
+  void pgaDisable();
+
+  void extAvcc(float extAvcc);
+  void avcc2V4();
+  void avcc2V7();
+  void avcc3V0();
+  void avcc3V3();
+  void avcc3V6();
+  void avcc3V9();
+  void avcc4V2();
+  void avcc4V5();
+
  private:
+  // TwoWire wire = TwoWire();
+  SoftwareWire wire = SoftwareWire(2,3);
   uint8_t _i2caddr;
   float _avcc = 3.3;
 
@@ -124,6 +146,7 @@ class NAU7802 {
   void write(uint8_t reg, uint8_t val);
   void writeBit(uint8_t reg, uint8_t bit);
   void clearBit(uint8_t reg, uint8_t bit);
+
 
   uint8_t  read(uint8_t reg);
   uint32_t read24(uint8_t reg);
