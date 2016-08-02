@@ -2,9 +2,17 @@
 #ifndef __NAU7802_H__
 #define __NAU7802_H__
 
+//Uncomment one of the following based on needs.
+#define NAU7802_DEFAULT_WIRE
+// #define NAU7802_SOFTWARE_WIRE
+// #define NAU7802_ESP8266_WIRE
+
 #include <Arduino.h>
 #include <Wire.h>
+
+#ifdef NAU7802_SOFTWARE_WIRE
 #include <SoftwareWire.h>
+#endif //NAU7802_SOFTWARE_WIRE
 
 #define NAU7802_I2CADDR   0x2A        //Static Adress
 
@@ -99,8 +107,18 @@
 class NAU7802 {
  public:
   NAU7802();
+
+  #ifdef NAU7802_DEFAULT_WIRE
   boolean begin(uint8_t addr = NAU7802_I2CADDR);
+  #endif //NAU7802_DEFAULT_WIRE
+
+  #ifdef NAU7802_SOFTWARE_WIRE
   boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
+  #endif //NAU7802_SOFTWARE_WIRE
+
+  #ifdef NAU7802_ESP8266_WIRE
+  boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
+  #endif //NAU7802_ESP8266_WIRE
 
   long readADC();
   float readmV();
@@ -136,8 +154,18 @@ class NAU7802 {
   void avcc4V5();
 
  private:
-  // TwoWire wire = TwoWire();
+  #ifdef NAU7802_DEFAULT_WIRE
+  TwoWire wire = TwoWire();
+  #endif //NAU7802_DEFAULT_WIRE
+
+  #ifdef NAU7802_SOFTWARE_WIRE
   SoftwareWire wire = SoftwareWire(2,3);
+  #endif //NAU7802_SOFTWARE_WIRE
+
+  #ifdef NAU7802_ESP8266_WIRE
+  TwoWire wire = TwoWire();
+  #endif //NAU7802_ESP8266_WIRE
+
   uint8_t _i2caddr;
   float _avcc = 3.3;
 

@@ -8,21 +8,35 @@ NAU7802::NAU7802() {
 
 // Setups the HW
 //==============
-// boolean NAU7802::begin(uint8_t addr) {
-//   _i2caddr = addr;
-//   wire = TwoWire();
-//   wire.begin();
-//   // resetSettings();
-//   return true;
-// }
+#ifdef NAU7802_DEFAULT_WIRE
+boolean NAU7802::begin(uint8_t addr) {
+  _i2caddr = addr;
+  wire = TwoWire();
+  wire.begin();
+  resetSettings();
+  return true;
+}
+#endif //NAU7802_DEFAULT_WIRE
 
+#ifdef NAU7802_SOFTWARE_WIRE
 boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
   _i2caddr = addr;
   wire = SoftwareWire(sda,scl);
   wire.begin();
-  // resetSettings();
+  resetSettings();
   return true;
 }
+#endif //NAU7802_SOFTWARE_WIRE
+
+#ifdef NAU7802_ESP8266_WIRE
+boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
+  _i2caddr = addr;
+  wire = TwoWire();
+  wire.begin(sda,scl);
+  resetSettings();
+  return true;
+}
+#endif //NAU7802_ESP8266_WIRE
 
 void NAU7802::resetSettings(){
   writeBit(NAU7802_PU_CTRL, NAU7802_RR);        //Reset Registers
@@ -71,7 +85,6 @@ void NAU7802::selectCh2(){
   writeBit(NAU7802_CTRL2, 7);
 }
 void NAU7802::selectTemp(){
-  write(NAU7802_CTRL1,0x38);    //Set AVCC to 2.4V
 }
 
 //Set Sampling rate
@@ -104,45 +117,45 @@ void NAU7802::rate320sps(){
 
 //Set Pre-Gain Amplifier
 //======================
-void pga128x(){
+void NAU7802::pga128x(){
 }
-void pga64x(){
+void NAU7802::pga64x(){
 }
-void pga32x(){
+void NAU7802::pga32x(){
 }
-void pga16x(){
+void NAU7802::pga16x(){
 }
-void pga8x(){
+void NAU7802::pga8x(){
 }
-void pga4x(){
+void NAU7802::pga4x(){
 }
-void pga2x(){
+void NAU7802::pga2x(){
 }
-void pga1x(){
+void NAU7802::pga1x(){
 }
-void pgaDisable(){
+void NAU7802::pgaDisable(){
 }
 
 //Set AVCC, Internal LDO
 //======================
-void extAvcc(float extAvcc){
+void NAU7802::extAvcc(float extAvcc){
 
 }
-void avcc2V4(){
+void NAU7802::avcc2V4(){
 }
-void avcc2V7(){
+void NAU7802::avcc2V7(){
 }
-void avcc3V0(){
+void NAU7802::avcc3V0(){
 }
-void avcc3V3(){
+void NAU7802::avcc3V3(){
 }
-void avcc3V6(){
+void NAU7802::avcc3V6(){
 }
-void avcc3V9(){
+void NAU7802::avcc3V9(){
 }
-void avcc4V2(){
+void NAU7802::avcc4V2(){
 }
-void avcc4V5(){
+void NAU7802::avcc4V5(){
 }
 //write(NAU7802_CTRL1,     0x38);    //Set AVCC to 2.4V
 
