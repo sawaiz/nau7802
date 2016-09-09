@@ -139,25 +139,65 @@ void NAU7802::pgaDisable(){
 //Set AVCC, Internal LDO
 //======================
 void NAU7802::extAvcc(float extAvcc){
-
+  clearBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Disable LDO
+  _avcc=extAvcc;
 }
 void NAU7802::avcc2V4(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 2.4V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 2.4V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 2.4V
+  _avcc=2.4;                                  //Local AVCC variable
 }
 void NAU7802::avcc2V7(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 2.7V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 2.7V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 2.7V
+  _avcc=2.7;                                  //Local AVCC variable
 }
 void NAU7802::avcc3V0(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 3.0V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 3.0V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 3.0V
+  _avcc=3.0;                                  //Local AVCC variable
 }
 void NAU7802::avcc3V3(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 3.3V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 3.3V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 3.3V
+  _avcc=3.3;                                  //Local AVCC variable
 }
 void NAU7802::avcc3V6(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 3.6V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 3.6V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 3.6V
+  _avcc=3.6;                                  //Local AVCC variable
 }
 void NAU7802::avcc3V9(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 3.9V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 3.9V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 3.9V
+  _avcc=3.9;                                  //Local AVCC variable
 }
 void NAU7802::avcc4V2(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 4.2V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 4.2V
+  writeBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 4.2V
+  _avcc=4.2;                                  //Local AVCC variable
 }
 void NAU7802::avcc4V5(){
+  writeBit(NAU7802_PU_CTRL, NAU7802_AVDDS);   //Enable LDO
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO2);     //Set AVCC to 4.5V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO1);     //Set AVCC to 4.5V
+  clearBit(NAU7802_CTRL1, NAU7802_VLDO0);     //Set AVCC to 4.5V
+  _avcc=4.5;                                  //Local AVCC variable
 }
-//write(NAU7802_CTRL1,     0x38);    //Set AVCC to 2.4V
 
 //Low level read and write procedures
 //===================================
