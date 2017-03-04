@@ -51,12 +51,16 @@ void NAU7802::resetSettings(){
   writeBit(NAU7802_PGA_REG, 0);                 //Diasble chopper funcition
   writeBit(NAU7802_PGA_REG, 4);                 //Bypass PGA
 
-  writeBit(NAU7802_CTRL2, NAU7802_CALS);        //Begin calibration
-  readUntilFalse(NAU7802_CTRL2, NAU7802_CALS);  //Wait for calibration to finish
+  calibrate();                                  //Calibrate
 
   writeBit(NAU7802_I2C_CTRL, NAU7802_SPE);      //Enable Strong Pullup
 
   writeBit(NAU7802_PU_CTRL,   NAU7802_CS);      //Start Conversion
+}
+
+void NAU7802::calibrate(){
+    writeBit(NAU7802_CTRL2, NAU7802_CALS);        //Begin calibration
+    readUntilFalse(NAU7802_CTRL2, NAU7802_CALS);  //Wait for calibration to finish
 }
 
 //Reads set channel
@@ -80,9 +84,11 @@ float NAU7802::readmV(){
 //=============
 void NAU7802::selectCh1(){
   clearBit(NAU7802_CTRL2, 7);
+  calibrate();
 }
 void NAU7802::selectCh2(){
   writeBit(NAU7802_CTRL2, 7);
+  calibrate();
 }
 void NAU7802::selectTemp(){
 }

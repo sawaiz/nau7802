@@ -61,7 +61,7 @@
 
 //REG0x00:PU_CTRL     Powerup Control
 #define NAU7802_AVDDS     7  //AVDD source select          1:Internal LDO        0:AVDD Pin Input              (0-Default)
-#define NAU7802_OSCS      6  //System clock source select  1:External Crystal    0:Internal RC OScillator      (0-Default)
+#define NAU7802_OSCS      6  //System clock source select  1:External Crystal    0:Internal RC Oscillator      (0-Default)
 #define NAU7802_CR        5  //Cycle ready (Read Only)     1:ADC Data Ready      0:No ADC Data                 (0-Default)
 #define NAU7802_CS        4  //Cycle start ADC             1:Start ADC           0:Stop ADC                    (0-Default)
 #define NAU7802_PUR       3  //Power up ready (Read Only)  1:Power up, Ready     0:Power down, not ready       (0-Default)
@@ -95,9 +95,9 @@
 #define NAU7802_CALMOD0  0  //Calibration Selection        1:System    0:System      1:RESERVED  0: Internal   (0-Default)
 
 //REG0x11:I2C_CTRL    I2C Control
-#define NAU7802_CRSD     7  //Pull SDA low on conversion   1:Enalbe                  0:Diable                  (0-Default)
-#define NAU7802_FRD      6  //Fast ADC DATA                1:Enalbe REQ REG0x15[7]:1 0:Disable                 (0-Default)
-#define NAU7802_SPE      5  //Enable strong pullup         1:Enalbe 1K6 pullup       0:Disable 1K6 pullup      (0-Default)
+#define NAU7802_CRSD     7  //Pull SDA low on conversion   1:Enable                  0:Diable                  (0-Default)
+#define NAU7802_FRD      6  //Fast ADC DATA                1:Enable REQ REG0x15[7]:1 0:Disable                 (0-Default)
+#define NAU7802_SPE      5  //Enable strong pullup         1:Enable 1K6 pullup       0:Disable 1K6 pullup      (0-Default)
 #define NAU7802_WPD      4  //Disable weak pullup          1:Disable 50K pullpup     0:Enable 50K pullup       (0-Default)
 #define NAU7802_SI       3  //Short Inputs                 1:Short Inputs            0:Inputs floating         (0-Default)
 #define NAU7802_BOPGA    2  //PGA bunout current source    1:2.5uA Current to PGA+   0:Current disabled        (0-Default)
@@ -170,6 +170,7 @@ class NAU7802 {
   float _avcc = 3.3;
 
   void resetSettings();
+  void calibrate();
 
   void write(uint8_t reg, uint8_t val);
   void writeBit(uint8_t reg, uint8_t bit);
