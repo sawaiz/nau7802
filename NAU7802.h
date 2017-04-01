@@ -99,15 +99,13 @@ class NAU7802 {
  public:
   NAU7802();
 
-  #ifdef ESP8266
+  #if defined NAU7802_SOFTWAREWIRE
     boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
-  #else  
+  #elif defined ESP8266
+    boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
+  #else
     boolean begin(uint8_t addr = NAU7802_I2CADDR);
-  #endif //ESP8266|Default
-
-  #ifdef SoftwareWire_h
-    boolean begin(uint8_t sda, uint8_t scl, uint8_t addr = NAU7802_I2CADDR);
-  #endif //SoftwareWire_h
+  #endif //ESP8266|NAU7802_SOFTWAREWIRE|Default
 
   long readADC();
   float readmV();
@@ -144,11 +142,11 @@ class NAU7802 {
 
  private:
 
-  #ifdef SoftwareWire_h
+  #ifdef NAU7802_SOFTWAREWIRE
     SoftwareWire wire = SoftwareWire(2,3);
   #else
     TwoWire wire = TwoWire();
-  #endif //SoftwareWire_h
+  #endif //NAU7802_SOFTWAREWIRE
 
   uint8_t _i2caddr;
   float _avcc = 3.3;

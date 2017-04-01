@@ -40,7 +40,11 @@ The pins functions are described below.
 Note : *TYPE* **P**: Power, **AI**: Analog input, **AO**: Analog output, **I**: input, **O**: output, **I/O**: bi-directional
 
 ## Use
-In the most basic form, all that is required to use the library is to place the files in the Arduino library folder, and call the begin and readADC functions.
+In the most basic form, all that is required to use the library is to place the files in the Arduino library folder, and call the begin and readADC functions. Using the software Wire library requires a definition before including your library.
+
+```Arduino
+#define NAU7802_SOFTWAREWIRE
+```
 
 After changing channels, the first 4 readings should be discarded for a proper rading.
 
