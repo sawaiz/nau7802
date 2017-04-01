@@ -37,6 +37,7 @@ The pins functions are described below.
 |14      | SDIO     | I/O  | I2C Data input                                    |
 |15      | DVDD     | P    | Digital power supply: 2.7V ~ 5.5V                 |
 |16      | AVDD     | P    | Analog power supply                               |
+
 Note : *TYPE* **P**: Power, **AI**: Analog input, **AO**: Analog output, **I**: input, **O**: output, **I/O**: bi-directional
 
 ## Use
