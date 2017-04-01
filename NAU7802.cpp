@@ -8,27 +8,7 @@ NAU7802::NAU7802() {
 
 // Setups the HW
 //==============
-#ifdef NAU7802_DEFAULT_WIRE
-boolean NAU7802::begin(uint8_t addr) {
-  _i2caddr = addr;
-  wire = TwoWire();
-  wire.begin();
-  resetSettings();
-  return true;
-}
-#endif //NAU7802_DEFAULT_WIRE
-
-#ifdef NAU7802_SOFTWARE_WIRE
-boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
-  _i2caddr = addr;
-  wire = SoftwareWire(sda,scl);
-  wire.begin();
-  resetSettings();
-  return true;
-}
-#endif //NAU7802_SOFTWARE_WIRE
-
-#ifdef NAU7802_ESP8266_WIRE
+#ifdef ESP8266
 boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
   _i2caddr = addr;
   wire = TwoWire();
@@ -36,7 +16,25 @@ boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
   resetSettings();
   return true;
 }
-#endif //NAU7802_ESP8266_WIRE
+#else
+boolean NAU7802::begin(uint8_t addr) {
+  _i2caddr = addr;
+  wire = TwoWire();
+  wire.begin();
+  resetSettings();
+  return true;
+}
+#endif //ESP8266|Default
+
+#ifdef SoftwareWire_h
+boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
+  _i2caddr = addr;
+  wire = SoftwareWire(sda,scl);
+  wire.begin();
+  resetSettings();
+  return true;
+}
+#endif //SoftwareWire_h
 
 void NAU7802::resetSettings(){
   writeBit(NAU7802_PU_CTRL, NAU7802_RR);        //Reset Registers

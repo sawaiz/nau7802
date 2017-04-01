@@ -1,5 +1,5 @@
 # Nuvoton NAU7802 Arduino Library
-This library provides readout of the 24-bit SAR ADC. This branch is the ESP8266 version as it needs the pins defined in order to use it.
+This library provides readout of Nuvoton [NAU7802](https://www.nuvoton.com/resource-files/NAU7802%20Data%20Sheet%20V1.7.pdf) 24-bit SAR ADC. This library works with the default wire library, the [ESP8266](https://github.com/esp8266/Arduino) wire implementation, and the [SoftwareWire](https://github.com/Testato/SoftwareWire) library.
 
 ## Hardware
 The pinout of the chip looks as follows. And the connections for reading in two single ended signals.
@@ -40,23 +40,25 @@ The pins functions are described below.
 Note : *TYPE* **P**: Power, **AI**: Analog input, **AO**: Analog output, **I**: input, **O**: output, **I/O**: bi-directional
 
 ## Use
-In the most basic form, all that is required to use the library is to place the files in the same directory as your Arduino (ino) file. and call the begin and readADC functions.
+In the most basic form, all that is required to use the library is to place the files in the Arduino library folder, and call the begin and readADC functions.
+
+After changing channels, the first 4 readings should be discarded for a proper rading.
 
 ### Example
 Basic code for testing is shown and included in example.
 
 ```Arduino
-#include "NAU7802.h"
+#include <NAU7802.h>
 
 NAU7802 adc = NAU7802();
 
 void setup() {
   Serial.begin(9600);
-	adc.begin(2,0);
+  adc.begin();
 }
 
 void loop() {
-  Serial.println(adc.readADC());
+  Serial.println(adc.readmV());
   delay(1000);
 }
 ```
@@ -64,14 +66,27 @@ void loop() {
 ### All Functions
 Here is a listing of all functions currently written.
 
-| Returns  | Command                   | Function                               |
-| -------- | ------------------------- | -------------------------------------- |
-| `boolean`| `begin(sda, scl, addr);`  | Starts up ADC, sets default registers  |
-| `long`   | `readADC();`              | Returns preformatted 24 bit ADC value  |
-| `void`   | `selectCh1();`            | Selects Channel 1 from internal MUX    |
-| `void`   | `selectCh1();`            | Selects Channel 2 from internal MUX    |
-| `void`   | `rate010sps();`           | Sets ADC rate to  10 Samples per Second|
-| `void`   | `rate020sps();`           | Sets ADC rate to  20 Samples per Second|
-| `void`   | `rate040sps();`           | Sets ADC rate to  40 Samples per Second|
-| `void`   | `rate080sps();`           | Sets ADC rate to  80 Samples per Second|
-| `void`   | `rate320sps();`           | Sets ADC rate to 320 Samples per Second|
+| Returns  | Command                   | Function                                                                                                            |
+| -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `boolean`| `begin();`                | Starts up ADC, sets default registers using default address (0x2A)                                                  |
+| `boolean`| `begin(addr);`            | Same as above using specific address                                                                                |
+| `boolean`| `begin(sda, scl);`        | Starts up ADC, sets default registers (requires *SoftwareWire* or *ESP8266*) |
+| `boolean`| `begin(sda, scl, addr);`  | Same as above using specific address                                                                                |
+| `long`   | `readADC();`              | Returns preformatted 24 bit ADC value                                                                               |
+| `float`  | `readmV();`               | Returns voltage in mV                                                                                               |
+| `void`   | `selectCh1();`            | Selects Channel 1 from internal MUX                                                                                 |
+| `void`   | `selectCh1();`            | Selects Channel 2 from internal MUX                                                                                 |
+| `void`   | `rate010sps();`           | Sets ADC rate to  10 Samples per Second                                                                             |
+| `void`   | `rate020sps();`           | Sets ADC rate to  20 Samples per Second                                                                             |
+| `void`   | `rate040sps();`           | Sets ADC rate to  40 Samples per Second                                                                             |
+| `void`   | `rate080sps();`           | Sets ADC rate to  80 Samples per Second                                                                             |
+| `void`   | `rate320sps();`           | Sets ADC rate to 320 Samples per Second                                                                             |
+| `void`   | `extAvcc(float extAvcc);` | Disables internal LDO, sets Avcc to the value given                                                                 |
+| `void`   | `avcc2V4();`              | Enables internal LDO and sets it to 2.4V                                                                            |
+| `void`   | `avcc2V7();`              | Enables internal LDO and sets it to 2.7V                                                                            |
+| `void`   | `avcc3v0();`              | Enables internal LDO and sets it to 3.4V                                                                            |
+| `void`   | `avcc3V3();`              | Enables internal LDO and sets it to 3.3V                                                                            |
+| `void`   | `avcc3V6();`              | Enables internal LDO and sets it to 3.6V                                                                            |
+| `void`   | `avcc3V9();`              | Enables internal LDO and sets it to 3.9V                                                                            |
+| `void`   | `avcc4V2();`              | Enables internal LDO and sets it to 4.3V                                                                            |
+| `void`   | `avcc4V5();`              | Enables internal LDO and sets it to 4.5V                                                                            |
