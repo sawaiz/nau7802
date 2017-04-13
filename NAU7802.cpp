@@ -11,7 +11,6 @@ NAU7802::NAU7802() {
 #if defined NAU7802_SOFTWAREWIRE
   boolean NAU7802::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
     _i2caddr = addr;
-    SoftwareWire wire = SoftwareWire(2,3);
     wire = SoftwareWire(sda,scl);
     wire.begin();
     resetSettings();
